@@ -1,0 +1,32 @@
+# --- Системные файлы macOS ---
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# --- Файлы с секретами и настройками окружения ---
+.env
+.env.local
+*.pem
+
+# --- Python (на будущее, для скриптов валидации) ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+
+# --- Node.js (если вдруг понадобится) ---
+node_modules/
+npm-debug.log*
+
+# --- Временные файлы и логи ---
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+# --- Специфичные для IDE (но оставляем .cursor/rules, они нам нужны!) ---
+.idea/
+.vscode/
+*.code-workspace

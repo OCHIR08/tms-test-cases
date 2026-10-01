@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TestCase",
+  "description": "Схема тест-кейса для Навигатора дополнительного образования",
+  "type": "object",
+  "required": ["id", "module", "priority", "title", "preconditions", "steps", "expected_result"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^TC-[0-9]{3}-[a-z0-9-]+$",
+      "description": "ID тест-кейса, формат TC-XXX-название"
+    },
+    "module": {
+      "type": "string",
+      "enum": ["registration", "authorization", "programs", "cabinet", "activities", "news"],
+      "description": "Модуль системы"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["Critical", "High", "Medium", "Low"],
+      "description": "Приоритет тест-кейса"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["positive", "negative", "edge_case"],
+      "description": "Тип тест-кейса"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Название тест-кейса"
+    },
+    "preconditions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Предусловия"
+    },
+    "test_data": {
+      "type": "object",
+      "description": "Тестовые данные",
+      "properties": {
+        "email": { "type": "string" },
+        "password": { "type": "string" },
+        "other": { "type": "string" }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["step_number", "action", "expected_result"],
+        "properties": {
+          "step_number": { "type": "integer", "minimum": 1 },
+          "action": { "type": "string", "minLength": 5 },
+          "expected_result": { "type": "string", "minLength": 5 },
+          "screenshot": { "type": "string" }
+        }
+      }
+    },
+    "expected_result": {
+      "type": "string",
+      "description": "Общий ожидаемый результат"
+    },
+    "postconditions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

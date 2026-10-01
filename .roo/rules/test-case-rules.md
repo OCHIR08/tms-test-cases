@@ -1,3 +1,17 @@
+# ⚠️ CRITICAL RULES & BOUNDARIES
+
+**MANDATORY TRIGGER**: Применяй эти правила ТОЛЬКО если пользователь явно просит создать, обновить или проанализировать TMS тест-кейс (Test Case) для ручного тестирования системы Навигатор дополнительного образования.
+
+**DO NOT USE IF**: 
+- Пользователь просит написать баг-репорт (Bug Report)
+- Пользователь просит написать Unit-тест или код автоматизации
+- Задача не связана с модулями: registration, authorization, programs, cabinet, activities, news
+
+**FORBIDDEN**: 
+- Никогда не используй примеры из папки `examples-legacy/`
+- Никогда не генерируй тест-кейсы без секций: Preconditions, Steps, Expected Result
+
+---
 # Project rules for Roo Code
 
 ## Scope
