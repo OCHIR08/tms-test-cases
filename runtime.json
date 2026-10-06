@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "project": "tms-test-cases",
+  "description": "Оркестрация работы ИИ-агента по генерации тест-кейсов",
+  "pipeline": [
+    {
+      "step": 1,
+      "name": "intake",
+      "description": "Чтение контекста и требований",
+      "source": "docs/",
+      "files": ["docs/business-rules-site.md", "docs/requirements-site.md"]
+    },
+    {
+      "step": 2,
+      "name": "load_rules",
+      "description": "Загрузка правил генерации",
+      "source": ".cursor/rules/",
+      "files": [".cursor/rules/test-case-rules.md"]
+    },
+    {
+      "step": 3,
+      "name": "load_schema",
+      "description": "Загрузка схемы валидации",
+      "source": "schemas/",
+      "files": ["schemas/test-case.schema.json"]
+    },
+    {
+      "step": 4,
+      "name": "load_examples",
+      "description": "Загрузка эталонных примеров",
+  : "Генерация тест-кейса ИИ-агентом",
+      "output_format": "json",
+      "schema": "schemas/test-case.schema.json"
+    },
+    {
+      "step": 6,
+      "name": "validate",
+      "description": "Валидация сгенерированного кейса",
+      "script": "scripts/validate_tc.py",
+      "max_retries": 2
+    },
+    {
+      "step": 7,
+      "name": "save",
+      "description": "Сохранение валидного кейса",
+      "destination": "examples/"
+    }
+  ],
+  "rules": {
+    "forbidden_folders": ["examples-legacy/"],
+    "required_sections": ["description", "preconditions", "steps", "expected_result"],
+    "style": "general_steps_no_hardcoded_data"
+  }
+}
