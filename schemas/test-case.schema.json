@@ -5,16 +5,31 @@
   "type": "object",
   "required": ["id", "module", "priority", "title", "preconditions", "steps", "expected_result"],
   "properties": {
-    "id": {
-      "type": "string",
-      "pattern": "^TC-[0-9]{3}-[a-z0-9-]+$",
-      "description": "ID тест-кейса, формат TC-XXX-название"
-    },
-    "module": {
-      "type": "string",
-      "enum": ["registration", "authorization", "programs", "cabinet", "activities", "news"],
-      "description": "Модуль системы"
-    },
+  "id": {
+    "type": "string",
+    "pattern": "^NAVI2E-[0-9]+$",
+  "description": "ID тест-кейса, формат NAVI2E-XXX"
+  },
+"module": {
+  "type": "string",
+  "enum": [
+    "registration",
+    "authorization",
+    "programs",
+    "cabinet",
+    "activities",
+    "news",
+    "certificates",
+    "contracts",
+    "reviews",
+    "blog",
+    "teachers",
+    "smart_navigator",
+    "social_order",
+    "validations"
+  ],
+  "description": "Модуль системы"
+},
     "priority": {
       "type": "string",
       "enum": ["Critical", "High", "Medium", "Low"],

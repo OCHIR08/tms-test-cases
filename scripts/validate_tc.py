@@ -22,20 +22,45 @@ def format_error(error: ValidationError) -> str:
     return f"- {error.message}"
 
 
-def load_json(path: Path, *, kind: str) -> object:
+def try_load_json(path: Path) -> tuple[object | None, str | None]:
     try:
         with path.open(encoding="utf-8") as file:
-            return json.load(file)
+            return json.load(file), None
     except json.JSONDecodeError as exc:
+        return None, (
+            f"Файл не является корректным JSON "
+            f"(строка {exc.lineno}, колонка {exc.colno}): {exc.msg}"
+        )
+    except OSError as exc:
+        return None, f"Не удалось прочитать файл: {exc}"
+
+
+def load_json(path: Path, *, kind: str) -> object:
+    data, error = try_load_json(path)
+    if error:
+        print(f"❌ ERROR: {kind}: {error} ({path})", file=sys.stderr)
+        sys.exit(1)
+    return data
+
+
+def load_schema() -> object:
+    if not SCHEMA_PATH.is_file():
         print(
-            f"❌ ERROR: Файл '{path}' не является корректным JSON "
-            f"(строка {exc.lineno}, колонка {exc.colno}): {exc.msg}",
+            f"❌ ERROR: Схема не найдена: {SCHEMA_PATH}\n"
+            "Ожидаемый путь относительно корня проекта: schemas/test-case.schema.json",
             file=sys.stderr,
         )
         sys.exit(1)
-    except OSError as exc:
-        print(f"❌ ERROR: Не удалось прочитать {kind} '{path}': {exc}", file=sys.stderr)
-        sys.exit(1)
+    return load_json(SCHEMA_PATH, kind="схему")
+
+
+def create_validator(schema: object | None = None) -> Draft7Validator:
+    return Draft7Validator(schema if schema is not None else load_schema())
+
+
+def collect_schema_errors(instance: object, validator: Draft7Validator) -> list[str]:
+    errors = sorted(validator.iter_errors(instance), key=lambda err: list(err.absolute_path))
+    return [format_error(error) for error in errors]
 
 
 def main() -> int:
@@ -47,28 +72,17 @@ def main() -> int:
 
     test_case_path = Path(args.json_path)
 
-    if not SCHEMA_PATH.is_file():
-        print(
-            f"❌ ERROR: Схема не найдена: {SCHEMA_PATH}\n"
-            "Ожидаемый путь относительно корня проекта: schemas/test-case.schema.json",
-            file=sys.stderr,
-        )
-        return 1
-
     if not test_case_path.is_file():
         print(f"❌ ERROR: Файл не найден: {test_case_path}", file=sys.stderr)
         return 1
 
-    schema = load_json(SCHEMA_PATH, kind="схему")
     instance = load_json(test_case_path, kind="тест-кейс")
-
-    validator = Draft7Validator(schema)
-    errors = sorted(validator.iter_errors(instance), key=lambda err: list(err.absolute_path))
+    errors = collect_schema_errors(instance, create_validator())
 
     if errors:
         print("❌ ERRORS FOUND:")
         for error in errors:
-            print(format_error(error))
+            print(error)
         return 1
 
     print("✅ VALID: Тест-кейс соответствует схеме")
